@@ -1,0 +1,2 @@
+cookbook-redis CHANGELOG
+===============
