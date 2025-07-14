@@ -3,8 +3,6 @@
 
 action :add do
   begin
-
-
     Chef::Log.info('Redis cookbook has been processed')
   rescue => e
     Chef::Log.error(e.message)

@@ -1,2 +1,2 @@
-# default attributes
+# Flags
 default['redis']['registered'] = false
