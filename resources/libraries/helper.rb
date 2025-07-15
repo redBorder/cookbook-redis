@@ -8,7 +8,7 @@ module Redis
       {
         is_cluster: is_cluster,
         master_host: master_host,
-        is_master_here: is_master_here
+        is_master_here: is_master_here,
       }
     end
   end
