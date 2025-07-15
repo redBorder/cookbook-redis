@@ -48,5 +48,5 @@ esac
 %doc
 
 %changelog
-* Mon Jul 14 2025 Rafael Gómez <rgomez@redborder.com> - 
+* Mon Jul 14 2025 Rafael Gómez <rgomez@redborder.com>
 - First version

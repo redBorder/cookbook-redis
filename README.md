@@ -34,4 +34,5 @@ Chef cookbook to install and configure redis in redborder environments
 ## License
 
 GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+
 Authors: Rafael Gómez <rgomez@redborder.com>
