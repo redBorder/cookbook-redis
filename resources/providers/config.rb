@@ -53,6 +53,7 @@ action :add do
       owner user
       group group
       mode '0644'
+      cookbook 'redis'
       variables(
         port: node['redis']['port'],
         password: redis_password,
@@ -79,6 +80,7 @@ action :add do
         owner user
         group group
         mode '0644'
+        cookbook 'redis'
         variables(
           data_dir: sentinel_data_dir,
           log_file: sentinel_log_file,
