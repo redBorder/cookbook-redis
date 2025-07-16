@@ -12,7 +12,7 @@
 [license-shield]: https://img.shields.io/badge/license-AGPLv3-blue.svg
 [license-url]: https://github.com/cookbook-redis/blob/HEAD/LICENSE
 
-Chef cookbook to install and configure redis in redborder environments
+Chef cookbook to install and configure Redis and Redis Sentinel in redborder environments
 
 ### Platforms
 

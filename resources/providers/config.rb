@@ -14,10 +14,20 @@ action :add do
     redis_hosts = new_resource.redis_hosts
     redis_secrets = new_resource.redis_secrets
     redis_password = redis_secrets['pass'] unless redis_secrets.empty?
+    sentinel_data_dir = new_resource.sentinel_data_dir
+    sentinel_log_file = new_resource.sentinel_log_file
+    sentinel_pid_file = new_resource.sentinel_pid_file
     cluster_info = get_cluster_info(redis_hosts, node['hostname'])
 
     dnf_package 'redis' do
       action :upgrade
+    end
+
+    service 'redis' do
+      service_name 'redis'
+      ignore_failure true
+      supports status: true, restart: true, enable: true
+      action [:start, :enable]
     end
 
     execute 'create_user' do
@@ -55,6 +65,40 @@ action :add do
       )
       notifies :restart, 'service[redis]'
     end
+
+    if redis_hosts.length > 1
+      service 'redis-sentinel' do
+        service_name 'redis-sentinel'
+        ignore_failure true
+        supports status: true, restart: true, enable: true
+        action [:start, :enable]
+      end
+
+      template '/etc/redis/sentinel.conf' do
+        source 'sentinel.conf.erb'
+        owner user
+        group group
+        mode '0644'
+        variables(
+          data_dir: sentinel_data_dir,
+          log_file: sentinel_log_file,
+          pid_file: sentinel_pid_file,
+          sentinel_port: node['redis']['sentinel_port'],
+          redis_port: node['redis']['port'],
+          master_host: cluster_info[:master_host],
+          password: redis_password
+        )
+        notifies :restart, 'service[redis-sentinel]'
+      end
+    else
+      service 'redis-sentinel' do
+        service_name 'redis-sentinel'
+        ignore_failure true
+        supports status: true, enable: true
+        action [:stop, :disable]
+      end
+    end
+
     Chef::Log.info('Redis cookbook has been processed')
   rescue => e
     Chef::Log.error(e.message)
@@ -63,6 +107,14 @@ end
 
 action :remove do
   begin
+    redis_dir = new_resource.redis_dir
+    data_dir = new_resource.data_dir
+    log_file = new_resource.log_file
+    pid_file = new_resource.pid_file
+    sentinel_data_dir = new_resource.sentinel_data_dir
+    sentinel_log_file = new_resource.sentinel_log_file
+    sentinel_pid_file = new_resource.sentinel_pid_file
+
     service 'redis' do
       service_name 'redis'
       ignore_failure true
@@ -88,6 +140,29 @@ action :remove do
     end
 
     file pid_file do
+      action :delete
+      ignore_failure true
+    end
+
+    service 'redis-sentinel' do
+      service_name 'redis-sentinel'
+      ignore_failure true
+      supports status: true, enable: true
+      action [:stop, :disable]
+    end
+
+    directory sentinel_data_dir do
+      recursive true
+      action :delete
+      ignore_failure true
+    end
+
+    file sentinel_log_file do
+      action :delete
+      ignore_failure true
+    end
+
+    file sentinel_pid_file do
       action :delete
       ignore_failure true
     end
