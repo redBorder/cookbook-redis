@@ -16,6 +16,6 @@ attribute :log_file, kind_of: String, default: '/var/log/redis/redis.log'
 attribute :pid_file, kind_of: String, default: '/var/run/redis/redis.pid'
 
 # Sentinel configuration attributes
-attribute :sentinel_data_dir, kind_of: String, default: '/tmp/redis-sentinel'
+attribute :sentinel_data_dir, kind_of: String, default: '/var/lib/redis/sentinel'
 attribute :sentinel_log_file, kind_of: String, default: '/var/log/redis/redis-sentinel.log'
 attribute :sentinel_pid_file, kind_of: String, default: '/var/run/redis/redis-sentinel.pid'

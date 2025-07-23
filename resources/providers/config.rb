@@ -68,6 +68,12 @@ action :add do
     end
 
     if redis_hosts.length > 1
+      directory sentinel_data_dir do
+        owner user
+        group group
+        mode '0755'
+      end
+
       service 'redis-sentinel' do
         service_name 'redis-sentinel'
         ignore_failure true
