@@ -1,5 +1,5 @@
 ################################## NETWORK ####################################
-bind 127.0.0.1 -::1
+bind 0.0.0.0
 protected-mode yes
 port <%= @port %>
 tcp-backlog 511
@@ -30,7 +30,7 @@ save 60 10000
 
 <% if @is_cluster && !@is_master_here && @master_host %>
 ################################# REPLICATION #################################
-replicaof <%= @master_host %> <%= @port %>
+replicaof <%= @master_host %>.<%= @cdomain %> <%= @port %>
 masterauth <%= @password %>
 replica-serve-stale-data yes
 replica-read-only yes
