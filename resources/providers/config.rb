@@ -83,7 +83,7 @@ action :add do
         action [:start, :enable]
       end
 
-      template '/etc/redis/sentinel.conf' do
+      template "#{redis_dir}/sentinel.conf" do
         source 'sentinel.conf.erb'
         owner user
         group group
