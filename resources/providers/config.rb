@@ -7,6 +7,7 @@ action :add do
   begin
     user = new_resource.user
     group = new_resource.group
+    cdomain = new_resource.cdomain
     redis_dir = new_resource.redis_dir
     data_dir = new_resource.data_dir
     log_file = new_resource.log_file
@@ -56,6 +57,7 @@ action :add do
       cookbook 'redis'
       variables(
         port: node['redis']['port'],
+        cdomain: cdomain,
         password: redis_password,
         data_dir: data_dir,
         log_file: log_file,
@@ -93,7 +95,7 @@ action :add do
           pid_file: sentinel_pid_file,
           sentinel_port: node['redis']['sentinel_port'],
           redis_port: node['redis']['port'],
-          master_host: cluster_info[:master_host],
+          master_ip: cluster_info[:master_ip],
           password: redis_password
         )
         notifies :restart, 'service[redis-sentinel]'
