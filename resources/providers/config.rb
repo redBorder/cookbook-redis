@@ -24,13 +24,6 @@ action :add do
       action :upgrade
     end
 
-    service 'redis' do
-      service_name 'redis'
-      ignore_failure true
-      supports status: true, restart: true, enable: true
-      action [:start, :enable]
-    end
-
     execute 'create_user' do
       command "/usr/sbin/useradd -r #{user} -s /sbin/nologin"
       ignore_failure true
@@ -66,7 +59,14 @@ action :add do
         master_host: cluster_info[:master_host],
         is_master_here: cluster_info[:is_master_here]
       )
-      notifies :restart, 'service[redis]'
+      notifies :restart, 'service[redis]', :delayed
+    end
+
+    service 'redis' do
+      service_name 'redis'
+      ignore_failure true
+      supports status: true, restart: true, enable: true
+      action [:start, :enable]
     end
 
     if redis_hosts.length > 1
@@ -74,13 +74,6 @@ action :add do
         owner user
         group group
         mode '0755'
-      end
-
-      service 'redis-sentinel' do
-        service_name 'redis-sentinel'
-        ignore_failure true
-        supports status: true, restart: true, enable: true
-        action [:start, :enable]
       end
 
       template "#{redis_dir}/sentinel.conf" do
@@ -98,7 +91,14 @@ action :add do
           master_ip: cluster_info[:master_ip],
           password: redis_password
         )
-        notifies :restart, 'service[redis-sentinel]'
+        notifies :restart, 'service[redis-sentinel]', :delayed
+      end
+
+      service 'redis-sentinel' do
+        service_name 'redis-sentinel'
+        ignore_failure true
+        supports status: true, restart: true, enable: true
+        action [:start, :enable]
       end
     else
       service 'redis-sentinel' do
