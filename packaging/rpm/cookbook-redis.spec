@@ -40,7 +40,8 @@ case "$1" in
 esac
 
 %files
-%defattr(0755,root,root)
+%defattr(0644,root,root)
+%attr(0755,root,root)
 /var/chef/cookbooks/redis
 %defattr(0644,root,root)
 /var/chef/cookbooks/redis/README.md
