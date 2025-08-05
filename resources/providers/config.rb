@@ -20,6 +20,21 @@ action :add do
     sentinel_pid_file = new_resource.sentinel_pid_file
     cluster_info = get_cluster_info(redis_hosts, node['hostname'])
 
+    execute 'reset redis module' do
+      command 'dnf module reset -y redis'
+      only_if 'dnf module list --enabled | grep -q "^redis"'
+    end
+
+    execute 'disable redis module' do
+      command 'dnf module disable -y redis'
+      not_if 'dnf module list --disabled | grep -q "^redis"'
+    end
+
+    execute 'lock redis version' do
+      command "dnf versionlock add --raw 'redis-6.*'"
+      not_if 'dnf versionlock list | grep redis'
+    end
+
     dnf_package 'redis' do
       action :upgrade
     end
