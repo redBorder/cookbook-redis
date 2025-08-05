@@ -31,13 +31,12 @@ action :add do
     end
 
     execute 'lock redis version' do
-      command 'dnf versionlock redis-6.2.18'
+      command "dnf versionlock add --raw 'redis-6.*'"
       not_if 'dnf versionlock list | grep redis'
     end
 
     dnf_package 'redis' do
       action :upgrade
-      version '6.2.18'
     end
 
     execute 'create_user' do
