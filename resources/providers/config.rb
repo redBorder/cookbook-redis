@@ -57,8 +57,8 @@ action :add do
       mode '0755'
     end
 
-    template "#{redis_dir}/redis.conf" do
-      source 'redis.conf.erb'
+    template "#{redis_dir}/redis-base.conf" do
+      source 'redis-base.conf.erb'
       owner user
       group group
       mode '0644'
@@ -77,6 +77,20 @@ action :add do
       notifies :restart, 'service[redis]', :delayed
     end
 
+    file "#{redis_dir}/redis.conf" do
+      action :delete
+      only_if { ::File.exist?("#{redis_dir}/redis.conf") &&
+                !::File.read("#{redis_dir}/redis.conf").include?("include #{redis_dir}/redis-base.conf") }
+    end
+
+    file "#{redis_dir}/redis.conf" do
+      content "include #{redis_dir}/redis-base.conf\n"
+      owner user
+      group group
+      mode '0644'
+      action :create_if_missing
+    end
+
     service 'redis' do
       service_name 'redis'
       ignore_failure true
@@ -91,8 +105,8 @@ action :add do
         mode '0755'
       end
 
-      template "#{redis_dir}/sentinel.conf" do
-        source 'sentinel.conf.erb'
+      template "#{redis_dir}/sentinel-base.conf" do
+        source 'sentinel-base.conf.erb'
         owner user
         group group
         mode '0644'
@@ -107,6 +121,19 @@ action :add do
           password: redis_password
         )
         notifies :restart, 'service[redis-sentinel]', :delayed
+      end
+
+      file "#{redis_dir}/sentinel.conf" do
+        action :delete
+        only_if { ::File.exist?("#{redis_dir}/sentinel.conf") && !::File.read("#{redis_dir}/sentinel.conf").include?("include #{redis_dir}/sentinel-base.conf") }
+      end
+
+      file "#{redis_dir}/sentinel.conf" do
+        content "include #{redis_dir}/sentinel-base.conf\n"
+        owner user
+        group group
+        mode '0644'
+        action :create_if_missing
       end
 
       service 'redis-sentinel' do
