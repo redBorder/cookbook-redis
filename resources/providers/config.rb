@@ -79,8 +79,10 @@ action :add do
 
     file "#{redis_dir}/redis.conf" do
       action :delete
-      only_if { ::File.exist?("#{redis_dir}/redis.conf") &&
-                !::File.read("#{redis_dir}/redis.conf").include?("include #{redis_dir}/redis-base.conf") }
+      only_if do
+        ::File.exist?("#{redis_dir}/redis.conf") &&
+          !::File.read("#{redis_dir}/redis.conf").include?("include #{redis_dir}/redis-base.conf")
+      end
     end
 
     file "#{redis_dir}/redis.conf" do
@@ -125,7 +127,10 @@ action :add do
 
       file "#{redis_dir}/sentinel.conf" do
         action :delete
-        only_if { ::File.exist?("#{redis_dir}/sentinel.conf") && !::File.read("#{redis_dir}/sentinel.conf").include?("include #{redis_dir}/sentinel-base.conf") }
+        only_if do
+          ::File.exist?("#{redis_dir}/sentinel.conf") &&
+            !::File.read("#{redis_dir}/sentinel.conf").include?("include #{redis_dir}/sentinel-base.conf")
+        end
       end
 
       file "#{redis_dir}/sentinel.conf" do
