@@ -117,10 +117,7 @@ action :add do
           data_dir: sentinel_data_dir,
           log_file: sentinel_log_file,
           pid_file: sentinel_pid_file,
-          sentinel_port: node['redis']['sentinel_port'],
-          redis_port: node['redis']['port'],
-          master_ip: cluster_info[:master_ip],
-          password: redis_password
+          sentinel_port: node['redis']['sentinel_port']
         )
         notifies :restart, 'service[redis-sentinel]', :delayed
       end
@@ -134,7 +131,11 @@ action :add do
       end
 
       file "#{redis_dir}/sentinel.conf" do
-        content "include #{redis_dir}/sentinel-base.conf\n"
+        content <<~CONF
+          include #{redis_dir}/sentinel-base.conf
+          sentinel monitor mymaster #{cluster_info[:master_ip]} #{node['redis']['port']} 2
+          sentinel auth-pass mymaster #{redis_password}
+        CONF
         owner user
         group group
         mode '0644'

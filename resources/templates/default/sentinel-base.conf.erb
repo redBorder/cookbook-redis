@@ -7,9 +7,6 @@ logfile <%= @log_file %>
 dir <%= @data_dir %>
 acllog-max-len 128
 
-sentinel monitor mymaster <%= @master_ip %> <%= @redis_port %> 2
-sentinel auth-pass mymaster <%= @password %>
-
 sentinel parallel-syncs mymaster 1
 sentinel failover-timeout mymaster 10000
 sentinel down-after-milliseconds mymaster 5000
