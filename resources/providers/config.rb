@@ -18,7 +18,7 @@ action :add do
     sentinel_data_dir = new_resource.sentinel_data_dir
     sentinel_log_file = new_resource.sentinel_log_file
     sentinel_pid_file = new_resource.sentinel_pid_file
-    cluster_info = get_cluster_info(redis_hosts, node['hostname'])
+    cluster_info = get_cluster_info(redis_hosts)
 
     execute 'reset redis module' do
       command 'dnf module reset -y redis'
