@@ -1,10 +1,7 @@
 module Redis
   module Helper
     def find_ip_of_master_node
-      redis_ips = node['redborder']['cluster_info']
-        .select { |m, _| node['redborder']['managers_per_services']['redis'].include?(m) }
-        .map    { |_, v| v['ipaddress_sync'] }
-
+      redis_ips = node['redborder']['cluster_info'].select { |m, _| node['redborder']['managers_per_services']['redis'].include?(m) }.map { |_, v| v['ipaddress_sync'] }
       redis_ips.first
     end
 
