@@ -1,6 +1,11 @@
 cookbook-redis CHANGELOG
 ===============
 
+## 0.0.4
+
+  - nilsver
+    - [dab171b] remove dependency on serf
+
 ## 0.0.3
 
   - Rafael Gomez
