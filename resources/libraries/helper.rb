@@ -1,27 +1,15 @@
 module Redis
   module Helper
-    def get_serf_members
-      serf_output = `serf members`
-      members = {}
-
-      serf_output.each_line do |line|
-        parts = line.strip.split
-        next unless parts.length >= 2
-
-        hostname = parts[0]
-        ip = parts[1].split(':').first
-        members[hostname] = ip
-      end
-
-      members
+    def find_ip_of_master_node
+      redis_ips = node['redborder']['cluster_info'].select { |m, _| node['redborder']['managers_per_services']['redis'].include?(m) }.map { |_, v| v['ipaddress_sync'] }
+      redis_ips.first
     end
 
-    def get_cluster_info(redis_hosts, this_node)
-      serf_members = get_serf_members
+    def get_cluster_info(redis_hosts)
       is_cluster = redis_hosts.length > 1
       master_host = is_cluster ? redis_hosts.first : nil
-      master_ip = master_host ? serf_members[master_host] : nil
-      is_master_here = (master_host == this_node)
+      master_ip = master_host ? find_ip_of_master_node : nil
+      is_master_here = (master_host == node['hostname'])
 
       {
         is_cluster: is_cluster,
