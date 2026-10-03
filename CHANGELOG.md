@@ -1,6 +1,11 @@
 cookbook-redis CHANGELOG
 ===============
 
+## 0.0.5
+
+  - manegron
+    - [c440a64] Upload cookbook only if opscode-erchef is active
+
 ## 0.0.4
 
   - nilsver
