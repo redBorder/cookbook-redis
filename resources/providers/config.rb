@@ -14,7 +14,8 @@ action :add do
     pid_file = new_resource.pid_file
     redis_hosts = new_resource.redis_hosts
     redis_secrets = new_resource.redis_secrets
-    redis_password = redis_secrets['pass'] unless redis_secrets.empty?
+    openbao = new_resource.openbao
+    redis_password = redis_secrets['pass'] unless redis_secrets.empty? || openbao
     sentinel_data_dir = new_resource.sentinel_data_dir
     sentinel_log_file = new_resource.sentinel_log_file
     sentinel_pid_file = new_resource.sentinel_pid_file
@@ -57,6 +58,17 @@ action :add do
       mode '0755'
     end
 
+    openbao_secret_file 'redis-auth' do
+      source 'redis-auth.conf.ctmpl.erb'
+      cookbook 'redis'
+      destination '/run/rb-secrets/redis/auth.conf'
+      owner 'root'
+      group group
+      mode '0640'
+      unit 'redis'
+      action openbao ? :add : :remove
+    end
+
     template "#{redis_dir}/redis-base.conf" do
       source 'redis-base.conf.erb'
       owner user
@@ -67,6 +79,7 @@ action :add do
         port: node['redis']['port'],
         cdomain: cdomain,
         password: redis_password,
+        openbao: openbao,
         data_dir: data_dir,
         log_file: log_file,
         pid_file: pid_file,
@@ -100,6 +113,8 @@ action :add do
       action [:start, :enable]
     end
 
+    # shortcut: Sentinel rewrites sentinel.conf itself, so with OpenBao it still needs its auth-pass in /run; clusters are M3
+    Chef::Log.warn('redis: Sentinel has no auth-pass with OpenBao secrets yet (M3)') if openbao && redis_hosts.length > 1
     if redis_hosts.length > 1
       directory sentinel_data_dir do
         owner user
@@ -134,7 +149,7 @@ action :add do
         content <<~CONF
           include #{redis_dir}/sentinel-base.conf
           sentinel monitor mymaster #{cluster_info[:master_ip]} #{node['redis']['port']} 2
-          sentinel auth-pass mymaster #{redis_password}
+          #{openbao ? '' : "sentinel auth-pass mymaster #{redis_password}"}
         CONF
         owner user
         group group
