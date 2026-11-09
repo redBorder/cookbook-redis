@@ -62,6 +62,7 @@ action :add do
       source 'redis-auth.conf.ctmpl.erb'
       cookbook 'redis'
       destination '/run/rb-secrets/redis/auth.conf'
+      selinux_type 'redis_var_run_t' # redis runs confined (redis_t)
       owner 'root'
       group group
       mode '0640'
