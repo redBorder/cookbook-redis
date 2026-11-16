@@ -168,8 +168,8 @@ action :add do
         cookbook 'redis'
         destination '/run/rb-secrets/redis-sentinel/auth.conf'
         owner 'root'
-        group 'root'
-        mode '0600'
+        group group # the wait-for-file step of the unit runs as redis
+        mode '0640'
         unit 'redis-sentinel'
         action openbao ? :add : :remove
       end
