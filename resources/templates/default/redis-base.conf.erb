@@ -46,7 +46,6 @@ replica-priority 100
 ################################## SECURITY ###################################
 acllog-max-len 128
 <% if @openbao %>
-# requirepass/masterauth: rendered by the OpenBao agent into memory only
 include /run/rb-secrets/redis/auth.conf
 <% else %>
 requirepass <%= @password %>
