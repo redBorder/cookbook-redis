@@ -172,6 +172,12 @@ action :add do
         action :create_if_missing
       end
 
+      # an install from before OpenBao wrote the password here
+      execute 'remove-sentinel-auth-pass' do
+        command "sed -i '/^sentinel auth-pass /d' #{redis_dir}/sentinel.conf"
+        only_if { openbao && ::File.exist?("#{redis_dir}/sentinel.conf") && ::File.read("#{redis_dir}/sentinel.conf").match?(/^sentinel auth-pass /) }
+      end
+
       # Sentinel rewrites its config with auth-pass: it runs on a copy in /run seeded from /etc/redis/sentinel.conf
       sentinel_run = '/run/redis-sentinel'
       openbao_secret_file 'redis-sentinel-auth' do
