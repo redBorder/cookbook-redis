@@ -5,3 +5,5 @@ maintainer_email 'git@redborder.com'
 license          'AGPL-3.0'
 description      'Installs/Configures cookbook-redis'
 version          '0.0.5'
+
+depends 'openbao'

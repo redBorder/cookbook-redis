@@ -1,0 +1,1 @@
+{{ with secret "secret/data/redis" }}sentinel auth-pass mymaster {{ .Data.data.pass }}{{ end }}

@@ -1,0 +1,3 @@
+# Rendered by the OpenBao agent into /run (memory). Source: cookbook-redis
+{{ with secret "secret/data/redis" }}requirepass {{ .Data.data.pass }}
+masterauth {{ .Data.data.pass }}{{ end }}

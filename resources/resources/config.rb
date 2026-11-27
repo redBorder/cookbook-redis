@@ -7,7 +7,6 @@ default_action :add
 attribute :user, kind_of: String, default: 'redis'
 attribute :group, kind_of: String, default: 'redis'
 attribute :redis_hosts, kind_of: Array, default: []
-attribute :redis_secrets, kind_of: Hash, default: {}
 attribute :cdomain, kind_of: String, default: 'redborder.cluster'
 
 # Redis configuration attributes

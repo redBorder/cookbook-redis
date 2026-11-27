@@ -31,7 +31,6 @@ save 60 10000
 <% if @is_cluster && !@is_master_here && @master_host %>
 ################################# REPLICATION #################################
 replicaof <%= @master_host %>.<%= @cdomain %> <%= @port %>
-masterauth <%= @password %>
 replica-serve-stale-data yes
 replica-read-only yes
 repl-diskless-sync no
@@ -43,7 +42,7 @@ replica-priority 100
 
 ################################## SECURITY ###################################
 acllog-max-len 128
-requirepass <%= @password %>
+include /run/rb-secrets/redis/auth.conf
 
 ############################# LAZY FREEING ####################################
 lazyfree-lazy-eviction no
