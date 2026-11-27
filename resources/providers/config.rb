@@ -112,7 +112,7 @@ action :add do
       owner 'root'
       group group
       mode '0640'
-      action :create# also undo a leaked rewrite
+      action :create # also undo a leaked rewrite
     end
 
     service 'redis' do
